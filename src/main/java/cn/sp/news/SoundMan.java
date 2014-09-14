@@ -55,16 +55,10 @@ public class SoundMan extends Thread {
 		logger.info("Sound Man start.");
 		//		loopThread = Thread.currentThread();
 		while (true) {
-
 			if (read && !msgQueue.isEmpty()) {
-				String msg = msgQueue.poll();
+				String msg = msgQueue.peek();
 				synthesize(msg);
 			}
-			//			try {
-			//				Thread.sleep(1000);
-			//			} catch (InterruptedException e) {
-			//				e.printStackTrace();
-			//			}
 		}
 	}
 
@@ -77,11 +71,17 @@ public class SoundMan extends Thread {
 		stopRead();
 		msgQueue.clear();
 		msgQueue.offer(msg);
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+		 logger.error("error.",e);
+		}
 		this.speak();
 
 	}
 
 	private void speak() {
+		logger.info("speak,queueSize:{}",msgQueue.size());
 		read = true;
 	}
 
@@ -103,6 +103,7 @@ public class SoundMan extends Thread {
 
 	private void synthesize(String text) {
 		synthesizer.cancel();
+		logger.info("text:{}",text);
 		synthesizer.playText(text, null, synListener);
 		stopRead();
 	}
@@ -116,13 +117,12 @@ public class SoundMan extends Thread {
 		}
 
 		public void onEnd(SpeechError error) {
-			if (error == null)
+			if (error == null){
 				logger.info("*************会话成功*************");
-			else{
+				msgQueue.poll();
+			}else{
 				logger.info(error.toString());
 			}
-				
-
 			speak();
 		}
 
@@ -153,6 +153,7 @@ public class SoundMan extends Thread {
 		logger.info("sayAndDo");
 		stopRead();
 		synthesizer.cancel();
+		msgQueue.clear();
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
@@ -214,6 +215,7 @@ public class SoundMan extends Thread {
 	 */
 	public void sayNext() {
 		synthesizer.cancel();
+		msgQueue.poll();
 		speak();
 		
 	}

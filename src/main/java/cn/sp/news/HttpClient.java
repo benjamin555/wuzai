@@ -106,7 +106,7 @@ public class HttpClient {
 			//从初始的节点列表跌倒所有的节点
 			processNodeList(list, keyword);
 		} catch (ParserException e) {
-			e.printStackTrace();
+			logger.error("error", e);
 		}
 	}
 

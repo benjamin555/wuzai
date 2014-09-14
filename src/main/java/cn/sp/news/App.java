@@ -62,7 +62,7 @@ public class App {
 		} catch (FeedException ex) {
 			ex.printStackTrace();
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("error", e);
 		}
 
 	}
@@ -114,11 +114,11 @@ public class App {
 				output2Client(p);
 			}
 		} catch (FailingHttpStatusCodeException e) {
-			e.printStackTrace();
+			logger.error("error", e);
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
+			logger.error("error", e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("error", e);
 		}
 		
 	}

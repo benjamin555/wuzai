@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import cn.sp.news.MainView.KeyOperation;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
 import com.rometools.rome.feed.synd.SyndEntry;
@@ -24,6 +25,7 @@ import com.rometools.rome.io.XmlReader;
 * @version 创建时间：2014-9-14 上午10:03:52
 * @email benjaminchen555@gmail.com
 */
+@SuppressWarnings("unchecked")
 public class NewsAnt {
 	String urlStr = "http://rss.sina.com.cn/news/marquee/ddt.xml";
 	private Logger logger = LoggerFactory.getLogger(getClass());
@@ -54,11 +56,11 @@ public class NewsAnt {
 		} catch (MalformedURLException e1) {
 			e1.printStackTrace();
 		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
+			logger.error("error", e);
 		} catch (FeedException e) {
-			e.printStackTrace();
+			logger.error("error", e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("error", e);
 		}
 		output2Client("读取新闻完毕，按{0}键，读下一条新闻。",KeyOperation.DOWN.getDescription());
 	}
@@ -103,18 +105,19 @@ public class NewsAnt {
 			detailPage = webClient.getPage(link);
 			logger.info("link:{}",link);
 			output2Client("按空格键，切换下个段落");
+//			output2Client("按P键，查看评论");
 			List<HtmlParagraph> ls = (List<HtmlParagraph>) detailPage.getByXPath("//div[@id='artibody']/p");
 			for (HtmlParagraph domElement : ls) {
 				String p = domElement.getTextContent();
 				output2Client(p);
 			}
-			output2Client("按P键，查看评论");
+			
 		} catch (FailingHttpStatusCodeException e) {
-			e.printStackTrace();
+			logger.error("error", e);
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
+			logger.error("error", e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("error", e);
 		}
 		
 	}
@@ -140,15 +143,29 @@ public class NewsAnt {
 	/**
 	 * 展示当前前三条评论
 	 */
+	
 	public void showComment() {
-//		if (detailPage!=null) {
-//			List<HtmlDivision> ds = (List<HtmlDivision>) detailPage.getByXPath("//div[@id='J_Comment_List_Hot']//div[@class='comment_content'][position()<4]/div[@class='t_txt']");
-//			for (HtmlDivision htmlDivision : ds) {
-//				output2Client(htmlDivision.getTextContent());
-//			}
-//		}else {
-//			output2Client("不存在新闻明细页");
-//		}
+		if (detailPage!=null) {
+			List<HtmlElement> ds = (List<HtmlElement>) detailPage.getByXPath("//p[@id='J_Post_Box_Count']/a");
+			if (ds!=null&&ds.size()>0) {
+				String href = ds.get(0).getAttribute("href");
+				try {
+					HtmlPage page  = webClient.getPage(href);
+					List<String> list = (List<String>) page.getByXPath("//div[@class='comment_content J_Comment_Txt clearfix'][position<4]/div[@class='t_txt']/text()");
+					for (String string : list) {
+						output2Client(string);
+					}
+				} catch (FailingHttpStatusCodeException e) {
+					logger.error("error", e);
+				} catch (MalformedURLException e) {
+					logger.error("error", e);
+				} catch (IOException e) {
+					logger.error("error", e);
+				}
+			}
+		}else {
+			output2Client("不存在新闻明细页");
+		}
 		
 	}
 

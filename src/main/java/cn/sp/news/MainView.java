@@ -70,7 +70,6 @@ public class MainView extends JFrame implements ActionListener {
 					soundMan.sayNext();
 					return;
 				}
-				soundMan.sayMsg("你输入的命令为 " + KeyEvent.getKeyText(e.getKeyCode()));
 				//如果为esc，则退出程序
 				if (KeyEvent.VK_ESCAPE == e.getKeyCode()) {
 					soundMan.sayAndDo("即将退出程序", new Action() {
@@ -79,7 +78,11 @@ public class MainView extends JFrame implements ActionListener {
 							exit();
 						}
 					});
+					return;
 				}
+				
+				soundMan.sayMsg("你输入的命令为 " + KeyEvent.getKeyText(e.getKeyCode()));
+				
 
 				if (KeyEvent.VK_UP == e.getKeyCode() || KeyEvent.VK_UP == e.getKeyCode()) {
 					newsAnt.showPreviousNews();
@@ -94,9 +97,9 @@ public class MainView extends JFrame implements ActionListener {
 					newsAnt.showDetail();
 				}
 				
-				if (KeyEvent.VK_P == e.getKeyCode() ) {
-					newsAnt.showComment();
-				}
+//				if (KeyEvent.VK_P == e.getKeyCode() ) {
+//					newsAnt.showComment();
+//				}
 
 			}
 		});
