@@ -49,8 +49,20 @@ public class MainView extends JFrame implements ActionListener {
 	 * 
 	 */
 	public MainView() {
-
+		
 		newsAnt = new NewsAnt();
+		
+		initKeyListener();
+		
+		//设置界面大小，背景图片
+		showView();
+	
+		
+		
+		
+	}
+
+	protected void initKeyListener() {
 		this.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -103,7 +115,12 @@ public class MainView extends JFrame implements ActionListener {
 
 			}
 		});
-		//设置界面大小，背景图片
+	}
+
+	/**
+	 * 设置界面大小，背景图片
+	 */
+	protected void showView() {
 		String imagePath = "res/bg.png";
 		ImageIcon background = new ImageIcon(getClass().getClassLoader().getResource(imagePath));
 		JLabel label = new JLabel(background);

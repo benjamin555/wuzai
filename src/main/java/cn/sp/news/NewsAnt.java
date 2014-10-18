@@ -3,6 +3,7 @@ package cn.sp.news;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -106,11 +107,12 @@ public class NewsAnt {
 			logger.info("link:{}",link);
 			output2Client("按空格键，切换下个段落");
 //			output2Client("按P键，查看评论");
-			List<HtmlParagraph> ls = (List<HtmlParagraph>) detailPage.getByXPath("//div[@id='artibody']/p");
-			for (HtmlParagraph domElement : ls) {
-				String p = domElement.getTextContent();
+			List<String> pList = new ArrayList<String>();
+			getComments(pList);
+			for (String p : pList) {
 				output2Client(p);
 			}
+			
 			
 		} catch (FailingHttpStatusCodeException e) {
 			logger.error("error", e);
@@ -120,6 +122,14 @@ public class NewsAnt {
 			logger.error("error", e);
 		}
 		
+	}
+
+	protected void getComments(List<String> pList) {
+		List<HtmlParagraph> ls = (List<HtmlParagraph>) detailPage.getByXPath("//div[@id='artibody']/p");
+		for (HtmlParagraph domElement : ls) {
+			String p = domElement.getTextContent();
+			pList.add(p);
+		}
 	}
 
 	public void showPreviousNews() {
